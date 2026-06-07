@@ -2,7 +2,7 @@
 
 ## Demo Videosu
 
-[YouTube video linki buraya eklenecek]
+https://youtu.be/VdTpCdWiYtY
 
 ---
 
