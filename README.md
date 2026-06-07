@@ -495,3 +495,77 @@ Araçlar:
 
 
 ---
+# 2. Kısım – Firmware Analizi (new-firmware.z1)
+
+## 1. Binary Kimlik Analizi
+
+İlk olarak firmware dosyasını incelemek için aşağıdaki komut kullanılmıştır:
+
+```bash
+msp430-readelf -h new-firmware.z1
+```
+
+Bu komutun çıktısına göre `new-firmware.z1` dosyasının bir ELF executable dosyası olduğu görülmüştür. Ayrıca dosyanın MSP430 mikrodenetleyicisi için derlendiği anlaşılmıştır.
+
+Dosyada little endian veri yapısı kullanılmaktadır. Programın başlangıç adresi (entry point) `0x3100` olarak görünmektedir.
+
+Ayrıca dosyanın ABI türü Standalone App olarak görülmüştür ve dosyada toplam 21 section bulunmaktadır.
+<img width="1171" height="457" alt="Ekran görüntüsü 2026-06-07 145411" src="https://github.com/user-attachments/assets/1ffb8564-687b-4495-b97c-bb1c7af6d9ce" />
+
+
+### Compiler / Toolchain Bilgisi
+
+Firmware’in hangi derleyici ile oluşturulduğunu anlamak için şu komut kullanılmıştır:
+
+```bash
+msp430-strings new-firmware.z1 | grep GCC
+```
+
+Çıktıda GCC görüldüğü için firmware’in GNU GCC toolchain ile derlendiği düşünülmektedir.
+<img width="1050" height="92" alt="Ekran görüntüsü 2026-06-07 152936" src="https://github.com/user-attachments/assets/721ac516-5b80-4330-8950-2081b5212fb6" />
+
+## 2. Bellek Kullanım Analizi
+
+Bellek kullanımı için aşağıdaki komut kullanılmıştır:
+
+```bash
+msp430-size new-firmware.z1
+```
+
+Çıktıya göre:
+
+* `.text` boyutu: **71715 byte**
+* `.data` boyutu: **336 byte**
+* `.bss` boyutu: **5706 byte**
+
+Burada `.text` bölümünün daha büyük olduğu görülmektedir. Bu durum firmware içinde program kodlarının daha fazla yer kapladığını göstermektedir.
+<img width="700" height="78" alt="Ekran görüntüsü 2026-06-07 153134" src="https://github.com/user-attachments/assets/174a61ee-46fb-4674-ade3-9b23abf01117" />
+
+## 7. ELF Yapısı Analizi
+
+ELF dosyasındaki bölümleri görmek için şu komut kullanılmıştır:
+
+```bash
+msp430-readelf -S new-firmware.z1
+```
+
+### .text
+
+`.text` bölümü programın çalıştırılan kodlarını içermektedir.
+
+### .data
+
+`.data` bölümünde başlangıç değeri verilmiş global değişkenler bulunmaktadır.
+
+### .bss
+
+`.bss` bölümünde başlangıç değeri verilmemiş değişkenler bulunmaktadır.
+
+### .rodata
+
+`.rodata` bölümünde sabit veriler bulunmaktadır.
+
+### .vectors
+
+`.vectors` bölümü interrupt (kesme) vektörlerini içermektedir.
+<img width="815" height="571" alt="Ekran görüntüsü 2026-06-07 153237" src="https://github.com/user-attachments/assets/32ccbefc-a13c-4831-b021-6ee174bac892" />
