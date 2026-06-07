@@ -1,6 +1,6 @@
 # BIL304 — OTA Firmware Güncelleme Projesi
 
-## Demo Videosu
+## Youtube Videosu
 
 https://youtu.be/VdTpCdWiYtY
 
